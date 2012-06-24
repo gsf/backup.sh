@@ -1,0 +1,14 @@
+# example for .ssh/config
+
+host example1
+    hostname example.com
+    identityfile backup_id_rsa
+    compression yes
+    protocol 2
+
+host example2
+    user exampleuser
+    hostname example.org
+    identityfile backup_id_rsa
+    compression yes
+    protocol 2
