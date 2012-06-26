@@ -1,24 +1,48 @@
 #!/bin/sh
 # See http://www.mikerubel.org/computers/rsync_snapshots/
 
-# SRC is the source, e.g. example:/mnt/mirror/
-SRC="$1:$2"
+MAX_BAKS=10
 
-# BAK is the path to the backup dir, e.g. backups/example/backup
-BAK="backups/$1/backup"
+# src is the source, e.g. example.com:/mnt/mirror/
+src="$1"
 
 # don't do anything if no ssh connection
-if ! ssh $1 :; then exit 
+src_host=${src%%:*}
+if ! ssh $src_host :; then exit 
 fi
 
-rm -rf $BAK.9
-mv $BAK.8 $BAK.9
-mv $BAK.7 $BAK.8
-mv $BAK.6 $BAK.7
-mv $BAK.5 $BAK.6
-mv $BAK.4 $BAK.5
-mv $BAK.3 $BAK.4
-mv $BAK.2 $BAK.3
-mv $BAK.1 $BAK.2
-mv $BAK.0 $BAK.1
-rsync -az --del --link-dest=../backup.1 $SRC $BAK.0
+# bakdir is the path to the backup dir, e.g. backups/example/
+case $2 in 
+  '') bakdir="$PWD/" ;; # if empty assign PWD
+  /*/) bakdir="$2" ;; # if starts and ends in a slash assign
+  /*) bakdir="$2/" ;; # if no end slash add one
+  */) bakdir="$PWD/$2" ;; # if no start slash add PWD
+  *) bakdir="$PWD/$2/" ;; # if no start or end slash add all
+esac
+
+echo "Backing up to $bakdir...",
+
+mkdir -p "$bakdir"
+
+baks=`ls "$bakdir"`
+
+i=`echo $baks | wc -w`
+
+for b in $baks; do
+  #echo $b
+  if [ $i -gt $MAX_BAKS ]; then
+    rm -rf "$bakdir$b"
+  fi
+  if [ $i -eq 1 ]; then
+    linkdest="$bakdir$b"
+  fi
+  i=$((i-1))
+done
+
+name=`date --iso-8601=seconds`
+
+if [ -n $linkdest ]; then
+  rsync -az --del "$src" "$bakdir$name"
+else
+  rsync -az --del --link-dest=$linkdest "$src" "$bakdir$name"
+fi
