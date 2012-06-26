@@ -1,4 +1,4 @@
-Simple backups of remote machines
+Simple backups of remote machines using rsync
 
 crontab:
     39 3 * * * /bin/sh backup.sh example1:/mnt/mirror backups/example1
