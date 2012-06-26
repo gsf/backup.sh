@@ -1,1 +1,19 @@
 Simple backups of remote machines
+
+crontab:
+    39 3 * * * /bin/sh backup.sh example1:/mnt/mirror backups/example1
+    39 4 * * * /bin/sh backup.sh example2:r /home/example2/backups
+
+.ssh/config:
+    host example1
+        hostname example.com
+        identityfile backup_id_rsa
+        compression yes
+        protocol 2
+
+    host example2
+        user exampleuser
+        hostname example.org
+        identityfile backup_id_rsa
+        compression yes
+        protocol 2
