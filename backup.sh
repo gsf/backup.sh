@@ -7,14 +7,15 @@ usage="usage: backup.sh <source> [dest]"
 
 # src is the source, e.g. example.com:/mnt/mirror/
 case $1 in
-  '') echo $usage; exit 0 ;;
+  '') echo $usage; exit ;;
   */) src="$1" ;; # assign if ends in a slash
   *) src="$1/" ;; # add slash if it doesn't
 esac
 
 # don't do anything if no ssh connection
 src_host=${src%%:*}
-if ! ssh $src_host :; then exit 
+if ! ssh $src_host :; then 
+  exit 
 fi
 
 # dest is the path to the destination directory, e.g. backups/example/
