@@ -13,7 +13,8 @@ case $1 in
 esac
 
 # don't do anything if no ssh connection
-src_host=${src%%:*}
+#src_host=${src%%:*}
+src_host=`echo $src | sed 's/:.*$//'`
 if ! ssh $src_host :; then 
   exit 
 fi
@@ -29,7 +30,7 @@ esac
 
 name=`date --iso-8601=seconds`
 # replace colons to avoid path name issues
-name=`echo $name | sed -e 's/:/./g'`
+name=`echo $name | sed 'y/:/./'`
 
 echo "Backing up to $dest$name..."
 
