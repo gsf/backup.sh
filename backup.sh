@@ -28,6 +28,8 @@ case $2 in
 esac
 
 name=`date --iso-8601=seconds`
+# replace colons to avoid path name issues
+name=`echo $name | sed -e 's/:/./g'`
 
 echo "Backing up to $dest$name..."
 
@@ -36,6 +38,7 @@ mkdir -p "$dest"
 baks=`ls "$dest"`
 i=`echo $baks | wc -w`
 for b in $baks; do
+  # remove old backups
   if [ $i -gt $MAX_BAKS ]; then
     rm -rf "$dest$b"
   fi
