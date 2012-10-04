@@ -57,13 +57,6 @@ name=`date --iso-8601=seconds`
 # replace colons to avoid path name issues
 name=`echo $name | sed 'y/:/./'`
 
-# make parent directories if needed
-if $verbose; then
-  mkdir -pv "$dest"
-else
-  mkdir -p "$dest"
-fi
-
 # loop through backups from oldest to most recent
 baks=`ls "$dest"`
 i=`echo $baks | wc -w`
